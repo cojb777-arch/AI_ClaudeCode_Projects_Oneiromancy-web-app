@@ -1,0 +1,251 @@
+/* ===== 夢見録 — 夜空をイメージしたテーマ ===== */
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #10122b;
+  --bg-card: #1c1f45;
+  --bg-input: #12143a;
+  --border: #3a3f7a;
+  --text: #e8e9f5;
+  --text-dim: #a9abd0;
+  --accent: #b39ddb;
+  --accent-strong: #9575cd;
+  --gold: #f4d06f;
+  --danger: #e57373;
+  --good: #81c784;
+}
+
+body {
+  font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", "Noto Sans JP", sans-serif;
+  background: radial-gradient(ellipse at top, #1b1e4b 0%, var(--bg) 60%);
+  min-height: 100vh;
+  color: var(--text);
+  line-height: 1.7;
+}
+
+.app-header {
+  padding: 24px 16px 0;
+  text-align: center;
+}
+.app-header h1 {
+  font-size: 1.7rem;
+  letter-spacing: 0.1em;
+  color: var(--gold);
+  text-shadow: 0 0 18px rgba(244, 208, 111, 0.35);
+}
+.app-header .subtitle {
+  font-size: 0.9rem;
+  color: var(--text-dim);
+  letter-spacing: 0.2em;
+}
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin: 18px auto 0;
+  max-width: 900px;
+}
+.tab-btn {
+  background: transparent;
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+  border-bottom: none;
+  border-radius: 10px 10px 0 0;
+  padding: 10px 16px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.tab-btn:hover { color: var(--text); background: rgba(179, 157, 219, 0.08); }
+.tab-btn.active {
+  color: var(--gold);
+  background: var(--bg-card);
+  border-color: var(--accent-strong);
+}
+
+main { max-width: 900px; margin: 0 auto; padding: 0 12px 40px; }
+
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 0 0 14px 14px;
+  padding: 22px 20px;
+  margin-bottom: 18px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+}
+.card + .card { border-radius: 14px; }
+.card h2 {
+  font-size: 1.15rem;
+  color: var(--accent);
+  margin-bottom: 14px;
+  border-left: 4px solid var(--accent-strong);
+  padding-left: 10px;
+}
+
+.note { font-size: 0.85rem; color: var(--text-dim); margin-bottom: 12px; }
+.note a { color: var(--accent); }
+
+.form-row { margin-bottom: 14px; }
+.form-row label {
+  display: block;
+  font-size: 0.88rem;
+  color: var(--text-dim);
+  margin-bottom: 5px;
+}
+
+input[type="date"], input[type="text"], input[type="password"],
+input[type="search"], select, textarea {
+  width: 100%;
+  background: var(--bg-input);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 1rem;
+  font-family: inherit;
+}
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--accent-strong);
+  box-shadow: 0 0 0 3px rgba(149, 117, 205, 0.25);
+}
+textarea { resize: vertical; }
+
+.btn-row { display: flex; flex-wrap: wrap; gap: 10px; margin: 12px 0; align-items: center; }
+.toolbar input[type="search"] { flex: 1 1 200px; width: auto; }
+
+.btn {
+  border: none;
+  border-radius: 8px;
+  padding: 11px 18px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: transform 0.1s, filter 0.2s;
+}
+.btn:hover { filter: brightness(1.15); }
+.btn:active { transform: scale(0.97); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn.primary { background: linear-gradient(135deg, #7e57c2, #5c6bc0); color: #fff; }
+.btn.secondary { background: var(--bg-input); color: var(--accent); border: 1px solid var(--border); }
+.btn.save { background: linear-gradient(135deg, #43a047, #2e7d32); color: #fff; }
+.btn.danger { background: transparent; color: var(--danger); border: 1px solid var(--danger); }
+.btn.recording { background: #c62828; color: #fff; animation: pulse 1.2s infinite; }
+
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(229, 115, 115, 0.6); }
+  50% { box-shadow: 0 0 0 10px rgba(229, 115, 115, 0); }
+}
+
+.status-text { font-size: 0.85rem; color: var(--gold); margin: 6px 0; }
+.status-text.error { color: var(--danger); }
+.status-text.ok { color: var(--good); }
+
+hr { border: none; border-top: 1px dashed var(--border); margin: 18px 0; }
+
+/* ===== 診断結果 ===== */
+.result-box {
+  background: var(--bg-input);
+  border: 1px solid var(--accent-strong);
+  border-radius: 10px;
+  padding: 16px;
+  margin: 14px 0;
+  font-size: 0.95rem;
+}
+.result-box.ai { border-color: var(--gold); }
+.result-box h3 { color: var(--gold); font-size: 1.05rem; margin-bottom: 10px; }
+.result-box .symbol-hit {
+  border-bottom: 1px dashed var(--border);
+  padding: 8px 0;
+}
+.symbol-hit:last-child { border-bottom: none; }
+.symbol-hit .sym-name { color: var(--accent); font-weight: bold; }
+.symbol-hit .sym-src { font-size: 0.75rem; color: var(--text-dim); margin-left: 8px; }
+.fortune-badge {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 1px 10px;
+  font-size: 0.75rem;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+.fortune-吉夢 { background: rgba(129, 199, 132, 0.2); color: var(--good); }
+.fortune-凶夢 { background: rgba(229, 115, 115, 0.2); color: var(--danger); }
+.fortune-警告夢 { background: rgba(244, 208, 111, 0.18); color: var(--gold); }
+.fortune-吉凶混合 { background: rgba(179, 157, 219, 0.18); color: var(--accent); }
+
+.ai-text { white-space: pre-wrap; }
+
+/* ===== 日記一覧 ===== */
+.diary-entry {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+.diary-entry summary {
+  cursor: pointer;
+  padding: 12px 14px;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: baseline;
+}
+.diary-entry summary::-webkit-details-marker { display: none; }
+.diary-entry summary:hover { background: rgba(179, 157, 219, 0.07); }
+.entry-date { color: var(--gold); font-weight: bold; white-space: nowrap; }
+.entry-preview { color: var(--text-dim); font-size: 0.88rem; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.entry-tag { font-size: 0.7rem; border: 1px solid var(--border); border-radius: 999px; padding: 0 8px; color: var(--text-dim); white-space: nowrap; }
+.entry-body { padding: 4px 16px 14px; border-top: 1px dashed var(--border); }
+.entry-body h4 { color: var(--accent); font-size: 0.9rem; margin: 12px 0 4px; }
+.entry-body .dream-text, .entry-body .diag-text { white-space: pre-wrap; font-size: 0.93rem; }
+.entry-actions { margin-top: 12px; display: flex; gap: 8px; }
+.entry-actions button {
+  background: transparent; border: 1px solid var(--border); color: var(--text-dim);
+  border-radius: 6px; padding: 5px 12px; font-size: 0.8rem; cursor: pointer;
+}
+.entry-actions button:hover { color: var(--text); border-color: var(--accent); }
+.entry-actions .del:hover { color: var(--danger); border-color: var(--danger); }
+
+/* ===== 辞書 ===== */
+#dict-results { margin-top: 14px; max-height: 480px; overflow-y: auto; }
+.dict-item {
+  border-bottom: 1px dashed var(--border);
+  padding: 10px 4px;
+}
+.dict-item .kw { color: var(--accent); font-weight: bold; }
+.dict-item .meaning { font-size: 0.9rem; color: var(--text); }
+.dict-item .src { font-size: 0.75rem; color: var(--text-dim); }
+
+.book-item {
+  display: flex; justify-content: space-between; align-items: center;
+  background: var(--bg-input); border: 1px solid var(--border);
+  border-radius: 8px; padding: 10px 14px; margin-bottom: 8px;
+}
+.book-item .book-name { color: var(--text); }
+.book-item .book-meta { font-size: 0.78rem; color: var(--text-dim); }
+.book-item button {
+  background: transparent; border: 1px solid var(--danger); color: var(--danger);
+  border-radius: 6px; padding: 4px 10px; cursor: pointer; font-size: 0.8rem;
+}
+
+.app-footer {
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 0.78rem;
+  padding: 20px 12px 30px;
+}
+
+@media (max-width: 600px) {
+  .app-header h1 { font-size: 1.3rem; }
+  .tab-btn { padding: 8px 10px; font-size: 0.8rem; }
+  .card { padding: 16px 12px; }
+}
