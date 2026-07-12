@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>夢見録 — 夢日記 &amp; 夢占い</title>
+<link rel="stylesheet" href="css/style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🌙</text></svg>">
+</head>
+<body>
+
+<header class="app-header">
+  <h1>🌙 夢見録 <span class="subtitle">— 夢日記 &amp; 夢占い —</span></h1>
+  <nav class="tabs" role="tablist">
+    <button class="tab-btn active" data-tab="tab-new">✍️ 夢を記録・診断</button>
+    <button class="tab-btn" data-tab="tab-diary">📖 夢日記一覧</button>
+    <button class="tab-btn" data-tab="tab-dict">📚 夢占い辞書</button>
+    <button class="tab-btn" data-tab="tab-settings">⚙️ 設定</button>
+  </nav>
+</header>
+
+<main>
+
+<!-- ============ タブ1: 夢を記録・診断 ============ -->
+<section id="tab-new" class="tab-panel active">
+  <div class="card">
+    <h2>今日の夢を記録する</h2>
+
+    <div class="form-row">
+      <label for="dream-date">📅 日付</label>
+      <input type="date" id="dream-date">
+    </div>
+
+    <div class="form-row">
+      <label for="dream-text">🛌 夢の内容（記入 または 音声入力）</label>
+      <textarea id="dream-text" rows="7"
+        placeholder="例）大きな白い蛇が空を飛んでいて、私はそれを追いかけて走っていた……"></textarea>
+    </div>
+
+    <div class="btn-row">
+      <button id="btn-voice" class="btn secondary">🎤 音声入力を開始</button>
+      <button id="btn-ocr-image" class="btn secondary">🖼️ 手書き日記の画像を読み込む（OCR）</button>
+      <input type="file" id="ocr-file-input" accept="image/*" multiple hidden>
+    </div>
+    <p id="voice-status" class="status-text" hidden></p>
+    <p id="ocr-status" class="status-text" hidden></p>
+
+    <hr>
+
+    <div class="btn-row">
+      <button id="btn-diagnose" class="btn primary">🔮 夢を診断する（辞書照合）</button>
+      <button id="btn-ai-diagnose" class="btn primary">✨ AIに夢判断してもらう（Claude）</button>
+    </div>
+    <p id="diag-status" class="status-text" hidden></p>
+
+    <div id="diagnosis-result" class="result-box" hidden></div>
+    <div id="ai-result" class="result-box ai" hidden></div>
+
+    <hr>
+
+    <div class="btn-row">
+      <button id="btn-save" class="btn save">💾 この夢を日記に保存する</button>
+    </div>
+    <p id="save-status" class="status-text" hidden></p>
+  </div>
+</section>
+
+<!-- ============ タブ2: 夢日記一覧 ============ -->
+<section id="tab-diary" class="tab-panel">
+  <div class="card">
+    <h2>夢日記一覧</h2>
+    <div class="btn-row toolbar">
+      <input type="search" id="diary-search" placeholder="🔍 キーワードで検索…">
+      <button id="btn-export" class="btn secondary">⬇️ 日記をダウンロード（JSON）</button>
+      <button id="btn-import" class="btn secondary">⬆️ 日記をアップロード（JSON）</button>
+      <input type="file" id="import-file-input" accept=".json,application/json" hidden>
+      <button id="btn-drive-import" class="btn secondary">☁️ Google Driveから手書き日記を取り込む</button>
+    </div>
+    <p id="drive-status" class="status-text" hidden></p>
+    <p id="diary-count" class="status-text"></p>
+    <div id="diary-list"></div>
+  </div>
+</section>
+
+<!-- ============ タブ3: 夢占い辞書 ============ -->
+<section id="tab-dict" class="tab-panel">
+  <div class="card">
+    <h2>夢占い辞書</h2>
+    <p class="note">内蔵の夢占いデータと、あなたがアップロードした夢占い本を横断検索できます。診断時にはここに登録された全データが参照されます。</p>
+    <input type="search" id="dict-search" placeholder="🔍 シンボルを検索（例：蛇、歯、空を飛ぶ…）">
+    <div id="dict-results"></div>
+  </div>
+
+  <div class="card">
+    <h2>📕 夢占いの本をアップロード</h2>
+    <p class="note">
+      複数の夢占い本・資料を登録できます。対応形式：
+      <strong>.txt / .md / .csv / .json / .pdf</strong><br>
+      「キーワード：意味」「【キーワード】意味」「キーワード,意味」のような行、または見出し＋本文の形式を自動で解析します。
+    </p>
+    <div class="btn-row">
+      <button id="btn-upload-book" class="btn secondary">📤 本のファイルを選択してアップロード</button>
+      <input type="file" id="book-file-input" accept=".txt,.md,.csv,.json,.pdf" multiple hidden>
+    </div>
+    <p id="book-status" class="status-text" hidden></p>
+    <div id="book-list"></div>
+  </div>
+</section>
+
+<!-- ============ タブ4: 設定 ============ -->
+<section id="tab-settings" class="tab-panel">
+  <div class="card">
+    <h2>✨ AI夢判断（Claude API）の設定</h2>
+    <p class="note">
+      AIによる夢判断と高精度OCRを使うには、AnthropicのAPIキーが必要です。
+      キーはこのブラウザ内（localStorage）にのみ保存され、外部にはAnthropic API以外へ送信されません。
+      APIキーは <a href="https://platform.claude.com/" target="_blank" rel="noopener">Claude Platform</a> で取得できます。
+    </p>
+    <div class="form-row">
+      <label for="api-key">APIキー</label>
+      <input type="password" id="api-key" placeholder="sk-ant-...">
+    </div>
+    <div class="form-row">
+      <label for="api-model">モデル</label>
+      <select id="api-model">
+        <option value="claude-opus-4-8">Claude Opus 4.8（推奨・高品質）</option>
+        <option value="claude-sonnet-5">Claude Sonnet 5（高速・低コスト）</option>
+        <option value="claude-haiku-4-5">Claude Haiku 4.5（最速・最安）</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>☁️ Google Drive 連携（手書き夢日記のOCR取り込み）</h2>
+    <p class="note">
+      Google Driveの所定フォルダにスマホ等で撮影した手書き夢日記の画像を入れておくと、
+      「Google Driveから手書き日記を取り込む」ボタンで一括OCR→夢診断→日記登録ができます。<br>
+      利用には Google Cloud Console で取得した <strong>OAuthクライアントID</strong> が必要です（README参照）。
+    </p>
+    <div class="form-row">
+      <label for="gdrive-client-id">OAuth クライアントID</label>
+      <input type="text" id="gdrive-client-id" placeholder="xxxxxxxx.apps.googleusercontent.com">
+    </div>
+    <div class="form-row">
+      <label for="gdrive-folder">取り込みフォルダ名</label>
+      <input type="text" id="gdrive-folder" placeholder="夢日記" value="夢日記">
+    </div>
+    <div class="form-row">
+      <label for="ocr-engine">OCRエンジン</label>
+      <select id="ocr-engine">
+        <option value="claude">Claude Vision（高精度・APIキー必要）</option>
+        <option value="tesseract">Tesseract.js（無料・精度は低め）</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>🗑️ データ管理</h2>
+    <div class="btn-row">
+      <button id="btn-save-settings" class="btn primary">💾 設定を保存</button>
+      <button id="btn-clear-all" class="btn danger">⚠️ 全データを削除（日記・本・設定）</button>
+    </div>
+    <p id="settings-status" class="status-text" hidden></p>
+  </div>
+</section>
+
+</main>
+
+<footer class="app-footer">
+  <p>夢見録 — あなたの夢を記録し、読み解くための夢日記アプリ。データはすべてお使いのブラウザ内に保存されます。</p>
+</footer>
+
+<script src="js/dictionary.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
